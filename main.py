@@ -118,17 +118,7 @@ def copy():
     tkinter.Label(notenskala, text="Kopiert!").grid(row=3)
     notenskala.mainloop()
 
-def printMac():
-    global printName
-    printName = prN.get()
-    pythonPa = str(dirname(__file__))
-    temp = open(f"{pythonPa}\mp.txt", "w")
-    temp.write(markStr)
-    temp.close()
-    try:
-       os.system(f"lpr -P {printName} {pythonPa}\mp.txt") 
-    except:
-        pass
+
 
 def print():
     systemA = str(platform.system())
@@ -145,6 +135,17 @@ def print():
     else:
         tkinter.Label(notenskala, text="Bitte namen des Druckers eingeben:").grid(row=5)
         prN = tkinter.Entry(notenskala)
+        def printMac():
+            global printName
+            printName = prN.get()
+            pythonPa = str(dirname(__file__))
+            temp = open(f"{pythonPa}\mp.txt", "w")
+            temp.write(markStr)
+            temp.close()
+            try:
+                os.system(f"lpr -P {printName} {pythonPa}\mp.txt") 
+            except:
+                print("wwas")
         prN.grid(row=6)
         printBttn = tkinter.Button(notenskala, text="Ok, Drucken starten", command=printMac)
         printBttn.grid(row=4)
