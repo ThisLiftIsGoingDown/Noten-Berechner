@@ -1,7 +1,9 @@
-
+import os
 import tkinter
 import pyperclip
-
+import time
+import platform
+from os.path import dirname
 
 
 
@@ -96,7 +98,7 @@ for j in range(0,4):
 tmpMark = 1
 tmpPkt = 0
 tmpPktW = 0
-markStr += "\A-zug:\n"
+markStr += "\nA-zug:\n"
 
 for i in range(0,7):
     markStr += f"{tmpMark}: {tmpPktW}/{maxPkt}\n"
@@ -116,12 +118,48 @@ def copy():
     tkinter.Label(notenskala, text="Kopiert!").grid(row=3)
     notenskala.mainloop()
 
+def printMac():
+    global printName
+    printName = prN.get()
+    pythonPa = str(dirname(__file__))
+    temp = open(f"{pythonPa}\mp.txt", "w")
+    temp.write(markStr)
+    temp.close()
+    try:
+       os.system(f"lpr -P {printName} {pythonPa}\mp.txt") 
+    except:
+        pass
+
+def print():
+    systemA = str(platform.system())
+    if systemA == 'Windows':
+        pythonPa = str(dirname(__file__))
+        temp = open(f"{pythonPa}\mp.txt", "w")
+        temp.write(markStr)
+        temp.close()
+        os.startfile(f"{pythonPa}\mp.txt", "print")
+        time.sleep(3)
+        os.remove(f"{pythonPa}\mp.txt")
+        tkinter.Label(notenskala, text="Wird mit standart Drucker gedruckt...").grid(row=5)
+        notenskala.mainloop()
+    else:
+        tkinter.Label(notenskala, text="Bitte namen des Druckers eingeben:").grid(row=5)
+        prN = tkinter.Entry(notenskala)
+        prN.grid(row=6)
+        printBttn = tkinter.Button(notenskala, text="Ok, Drucken starten", command=printMac)
+        printBttn.grid(row=4)
+        notenskala.mainloop()
+        pass
+
+
+
 notenskala = tkinter.Tk()
 notenskala.title("Notenskalierer")
 tkinter.Label(notenskala, text="Ihnre Notenskalen:").grid(row = 0)
 skalen = tkinter.Label(notenskala, text=markStr).grid(row=1)
 copyBttn = tkinter.Button(notenskala, text="Kopieren", command=copy)
 copyBttn.grid(row= 2)
+printBttn = tkinter.Button(notenskala, text="Drucken", command=print)
+printBttn.grid(row= 4)
 notenskala.mainloop()
-
 
