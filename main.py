@@ -80,7 +80,7 @@ for j in range(0,4):
 tmpMark = 1
 tmpPkt = 0
 tmpPktW = 0
-markStr += "E-zug:\n"
+markStr += "\nE-zug:\n"
 
 for i in range(0,7):
     markStr += f"{tmpMark}: {tmpPktW}/{maxPkt}\n"
@@ -96,7 +96,7 @@ for j in range(0,4):
 tmpMark = 1
 tmpPkt = 0
 tmpPktW = 0
-markStr += "A-zug:\n"
+markStr += "\A-zug:\n"
 
 for i in range(0,7):
     markStr += f"{tmpMark}: {tmpPktW}/{maxPkt}\n"
