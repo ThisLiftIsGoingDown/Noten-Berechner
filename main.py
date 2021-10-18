@@ -8,6 +8,22 @@ class Notenskalierer (wx.Frame):
 
     
     def InitUI(self):
+        #General Stuff
+        panel = wx.Panel(self)
+        panel.SetBackgroundColour('#696969')
+
+        vbox = wx.BoxSizer(wx.VERTICAL)
+
+        basicText = wx.TextCtrl(panel, -1, "Tomp", size=(175, -1))
+
+        middlePanel = wx.Panel(panel)
+        middlePanel.SetBackgroundColour('#11ef87')
+
+        vbox.Add(middlePanel, wx.ID_ANY, wx.EXPAND | wx.ALL, 10)
+        vbox.Add(basicText, wx.ID_ANY, wx.EXPAND | wx.ALL, 10)
+        panel.SetSizer(vbox)
+
+
         # Menubar
         menu = wx.MenuBar()
         fileMenu = wx.Menu()
