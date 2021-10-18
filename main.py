@@ -3,7 +3,9 @@ import tkinter
 import pyperclip
 import time
 import platform
+import wx
 from os.path import dirname
+import print as prt
 
 
 
@@ -62,19 +64,22 @@ UaStep = gPktA/7
 GpStep = (maxPkt-gPktP)/4
 GeStep = (maxPkt-gPktE)/4
 GaStep = (maxPkt-gPktA)/4
-
+markStrPr =""
 markStr = ""
 tmpMark = 1
 tmpPkt = 0
 tmpPktW = 0
 markStr += "P-zug:\n"
+markStrPr += "P-zug:<br/>"
 for i in range(0,7):
     markStr += f"{tmpMark}: {tmpPktW}/{maxPkt}\n"
+    markStrPr += f"{tmpMark}: {tmpPktW}/{maxPkt}<br/>"
     tmpMark += .5
     tmpPkt += UpStep
     tmpPktW = round(tmpPkt, 1)
 for j in range(0,4):
     markStr += f"{tmpMark}: {tmpPktW}/{maxPkt}\n"
+    markStrPr += f"{tmpMark}: {tmpPktW}/{maxPkt}<br/>"
     tmpMark += .5
     tmpPkt += GpStep
     tmpPktW = round(tmpPkt, 1)
@@ -83,14 +88,17 @@ tmpMark = 1
 tmpPkt = 0
 tmpPktW = 0
 markStr += "\nE-zug:\n"
+markStrPr += "<br/>E-zug<br/>"
 
 for i in range(0,7):
     markStr += f"{tmpMark}: {tmpPktW}/{maxPkt}\n"
+    markStrPr += f"{tmpMark}: {tmpPktW}/{maxPkt}<br/>"
     tmpMark += .5
     tmpPkt += UeStep
     tmpPktW = round(tmpPkt, 1)
 for j in range(0,4):
     markStr += f"{tmpMark}: {tmpPktW}/{maxPkt}\n"
+    markStrPr += f"{tmpMark}: {tmpPktW}/{maxPkt}<br/>"
     tmpMark += .5
     tmpPkt += GeStep
     tmpPktW = round(tmpPkt, 1)
@@ -99,19 +107,22 @@ tmpMark = 1
 tmpPkt = 0
 tmpPktW = 0
 markStr += "\nA-zug:\n"
+markStrPr += "<br/>A-zug:<br/>"
 
 for i in range(0,7):
     markStr += f"{tmpMark}: {tmpPktW}/{maxPkt}\n"
+    markStrPr += f"{tmpMark}: {tmpPktW}/{maxPkt}<br/>"
     tmpMark += .5
     tmpPkt += UaStep
     tmpPktW = round(tmpPkt, 1)
 for j in range(0,4):
     markStr += f"{tmpMark}: {tmpPktW}/{maxPkt}\n"
+    markStrPr += f"{tmpMark}: {tmpPktW}/{maxPkt}<br/>"
     tmpMark += .5
     tmpPkt += GaStep
     tmpPktW = round(tmpPkt, 1)
 
-print(markStr)
+
 
 def copy():
     pyperclip.copy(markStr)
@@ -121,7 +132,8 @@ def copy():
 
 
 def print():
-    systemA = str(platform.system())
+    prt.printnowgood(markStrPr)
+    '''systemA = str(platform.system())
     if systemA == 'Windows':
         pythonPa = str(dirname(__file__))
         temp = open(f"{pythonPa}\mp.txt", "w")
@@ -151,7 +163,7 @@ def print():
         printBttn.grid(row=4)
         notenskala.mainloop()
         tkinter.Label(notenskala, text="Das Drucken auf einem Mac wird zurzeit\nLeider noch nicht unterstützt, wird aber bald eingeführt!").grid(row=5)
-        notenskala.mainloop()
+        notenskala.mainloop()'''
 
 
 
