@@ -169,7 +169,7 @@ def print():
 
 notenskala = tkinter.Tk()
 notenskala.title("Notenskalierer")
-tkinter.Label(notenskala, text="Ihnre Notenskalen:").grid(row = 0)
+tkinter.Label(notenskala, text="Ihre Notenskalen:").grid(row = 0)
 skalen = tkinter.Label(notenskala, text=markStr).grid(row=1)
 copyBttn = tkinter.Button(notenskala, text="Kopieren", command=copy)
 copyBttn.grid(row= 2)

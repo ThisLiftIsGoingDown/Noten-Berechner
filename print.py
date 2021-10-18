@@ -77,8 +77,8 @@ class MyHtmlPrinter(HtmlEasyPrinting):
         # @TIME @ is replaced by the current time in default format.
         # @TITLE@ is replaced with the title of the document.
 
-        header = "My document"
-        footer = "Page @PAGENUM@ of @PAGESCNT@"
+        header = ""
+        footer = "Seite @PAGENUM@ von @PAGESCNT@"
 
         self.SetHeader(header)
         self.SetFooter(footer)
@@ -152,9 +152,9 @@ class MyFrame(wx.Frame):
         menub = wx.MenuBar()
 
         fmenu = wx.Menu()
-        fmenu.Append(wx.ID_PAGE_SETUP, "Page set&up\tCtrl+U")
-        fmenu.Append(wx.ID_PREVIEW, "Print pre&view\tCtrl+V")
-        fmenu.Append(wx.ID_PRINT, "&Print\tCtrl+P")
+        fmenu.Append(wx.ID_PAGE_SETUP, "Seiten Layo&ut\tCtrl+U")
+        fmenu.Append(wx.ID_PREVIEW, "Druck V&orschau\tCtrl+V")
+        fmenu.Append(wx.ID_PRINT, "Drucken\tCtrl+P")
         fmenu.AppendSeparator()
         fmenu.Append(wx.ID_EXIT, "E&xit\tCtrl+X")
         menub.Append(fmenu, "&File")
@@ -199,20 +199,20 @@ class MyFrame(wx.Frame):
 
         self.btnSetup = wx.Button(self.panel,
                                   id=wx.ID_PAGE_SETUP,
-                                  label="Page set&up")
+                                  label="Seiten Layo&ut")
 
         self.btnPreview = wx.Button(self.panel,
                                     wx.ID_PREVIEW,
-                                    label="Pre&view text")
+                                    label="Seiten &Vorschau")
         self.btnPreview.SetFocus()
 
         self.btnPrint = wx.Button(self.panel,
                                   id=wx.ID_PRINT,
-                                  label="&Print")
+                                  label="&Drucken")
 
         self.btnClose = wx.Button(self.panel,
                                   id=wx.ID_CLOSE,
-                                  label="E&xit")
+                                  label="Schliessen")
 
 
     def CreatePrinter(self):
