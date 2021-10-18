@@ -133,7 +133,7 @@ def print():
         tkinter.Label(notenskala, text="Wird mit standart Drucker gedruckt...").grid(row=5)
         notenskala.mainloop()
     else:
-        '''tkinter.Label(notenskala, text="Bitte namen des Druckers eingeben:").grid(row=5)
+        tkinter.Label(notenskala, text="Bitte namen des Druckers eingeben:").grid(row=5)
         prN = tkinter.Entry(notenskala)
         def printMac():
             global printName
@@ -149,7 +149,7 @@ def print():
         prN.grid(row=6)
         printBttn = tkinter.Button(notenskala, text="Ok, Drucken starten", command=printMac)
         printBttn.grid(row=4)
-        notenskala.mainloop()'''
+        notenskala.mainloop()
         tkinter.Label(notenskala, text="Das Drucken auf einem Mac wird zurzeit\nLeider noch nicht unterstützt, wird aber bald eingeführt!").grid(row=5)
         notenskala.mainloop()
 
