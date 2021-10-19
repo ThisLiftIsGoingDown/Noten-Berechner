@@ -59,14 +59,22 @@ class Notenskalierer (wx.Frame):
         try:
             tmp = float(tmp)
         except:
-            self.numberError = wx.MessageDialog(self, "Bitte geben sie eine Zahl ein!", "Fehler", wx.OK | wx.ICON_ERROR)
+            self.numberError = wx.MessageDialog(self, "Bitte geben Sie eine Zahl ein!", "Fehler", wx.OK | wx.ICON_ERROR)
             self.numberError.ShowModal()
 
 class SettingsDialogue(wx.Dialog):
         def __init__(self, parent, title):
-            super(SettingsDialogue, self).__init__(parent, title = title, size = (300, 200))
+            super(SettingsDialogue, self).__init__(parent, title = title, size = (350, 200))
+            self.readSettings()
             self.InitUI()
     
+        def readSettings(self):
+            self.settings = wx.Config('Notenskalierer')
+            self.multipleSc = self.settings.ReadBool('multipleScales')
+            self.pProzentV = self.settings.ReadFloat('pProzent')
+            self.eProzentV = self.settings.ReadFloat('eProzent')
+            self.aProzentV = self.settings.ReadFloat('aProzent')
+
         def InitUI(self):
             self.SetTitle("Einstellungen")
             self.Centre()
@@ -75,20 +83,30 @@ class SettingsDialogue(wx.Dialog):
 
             boxSizerSettings = wx.BoxSizer(wx.VERTICAL)
             zugGrid = wx.GridSizer(4, 2, 20, 20)
+            buttonGrid = wx.GridSizer(1, 2, 20, 20)
 
             self.multipleScale = wx.CheckBox(panel, -1, "Notenskalen für 3 verschiedene Leistungszüge")
-
-            self.pzug = wx.StaticText(panel, -1, "P zug prozent")
-            self.azug = wx.StaticText(panel, -1, "A zug prozent")
-            self.ezug = wx.StaticText(panel, -1, "E zug prozent")
-            self.pProzent = wx.TextCtrl(panel, -1, "", size=(175, -1))
-            self.eProzent = wx.TextCtrl(panel, -1, "", size=(175, -1))
-            self.aProzent = wx.TextCtrl(panel, -1, "", size=(175, -1))
-
+            self.multipleScale.SetValue(self.multipleSc)
             self.multipleScale.Bind(wx.EVT_CHECKBOX, self.OnMultipleScale)
 
-            
+            self.filler = wx.StaticText(panel, -1, "")
+
+            self.pzug = wx.StaticText(panel, -1, "P-Zug Prozent")
+            self.azug = wx.StaticText(panel, -1, "A-Zug Prozent")
+            self.ezug = wx.StaticText(panel, -1, "E-Zug Prozent")
+            self.pProzent = wx.TextCtrl(panel, -1, f"{self.pProzentV}", size=(175, -1))
+            self.eProzent = wx.TextCtrl(panel, -1, f"{self.eProzentV}", size=(175, -1))
+            self.aProzent = wx.TextCtrl(panel, -1, f"{self.aProzentV}", size=(175, -1))
+
+            self.okButton = wx.Button(panel, -1, "OK")
+            self.cancelButton = wx.Button(panel, -1, "Abbrechen")
+
+            self.okButton.Bind(wx.EVT_BUTTON, self.OnOk)
+            self.cancelButton.Bind(wx.EVT_BUTTON, self.OnCancel)
+
+            buttonGrid.AddMany([(self.okButton, 1, wx.EXPAND), (self.cancelButton, 1, wx.EXPAND)])
             zugGrid.AddMany([ (self.pzug, 1, wx.EXPAND), (self.pProzent, 1, wx.EXPAND), (self.azug, 1, wx.EXPAND), (self.aProzent, 1, wx.EXPAND), (self.ezug, 1, wx.EXPAND), (self.eProzent, 1, wx.EXPAND)])
+            zugGrid.AddMany([(self.filler, 1, wx.EXPAND),(buttonGrid, 1, wx.EXPAND) ])
             boxSizerSettings.Add(self.multipleScale, 0, wx.ALIGN_CENTER)
             boxSizerSettings.Add(zugGrid, wx.ID_ANY, wx.EXPAND | wx.ALL, 10)
             panel.SetSizer(boxSizerSettings)
@@ -102,7 +120,21 @@ class SettingsDialogue(wx.Dialog):
             else:
                 self.pProzent.Disable()
                 self.eProzent.Disable()
-                self.aProzent.Disable()            
+                self.aProzent.Disable()   
+        
+        def Save(self):
+            self.settings.WriteBool('multipleScales', self.multipleScale.GetValue())
+            self.settings.WriteFloat('pProzent', float(self.pProzent.GetValue()))
+            self.settings.WriteFloat('eProzent', float(self.eProzent.GetValue()))
+            self.settings.WriteFloat('aProzent', float(self.aProzent.GetValue()) )
+            self.settings.Flush()
+
+        def OnOk(self, e):
+            self.Save()
+            self.Close()  
+
+        def OnCancel(self, e):
+            self.Close()       
 
 
 def main():
