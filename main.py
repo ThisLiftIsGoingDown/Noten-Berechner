@@ -4,8 +4,9 @@ class Notenskalierer (wx.Frame):
 
     def __init__(self, parent, title):
         super(Notenskalierer, self).__init__(parent, title = title, size = (300, 150))
+        
         self.InitUI()
-
+        
     
     def InitUI(self):
         #General Stuff
@@ -18,7 +19,12 @@ class Notenskalierer (wx.Frame):
         self.titleText = wx.StaticText(panel, label = "Notenskalen Berechnen")
 
         self.basicText = wx.TextCtrl(panel, -1, "", size=(175, -1))
-        someTxt = wx.StaticText(panel, -1, "Maximalpunktzahl:")
+        someTxt = wx.StaticText(panel, -1, "Maxmalpunktzahl:")
+
+        MuState = SettingsDialogue.readMuState(SettingsDialogue)
+        print (MuState)
+        if not MuState:
+            pass
 
         okButton = wx.Button(panel, -1, "OK")
         okButton.Bind(wx.EVT_BUTTON, self.OnOk)
@@ -67,7 +73,12 @@ class SettingsDialogue(wx.Dialog):
             super(SettingsDialogue, self).__init__(parent, title = title, size = (350, 200))
             self.readSettings()
             self.InitUI()
-    
+
+        def readMuState(self):
+            self.settings = wx.Config('Notenskalierer')
+            return self.settings.ReadBool('multipleScales')
+
+
         def readSettings(self):
             self.settings = wx.Config('Notenskalierer')
             self.multipleSc = self.settings.ReadBool('multipleScales')
