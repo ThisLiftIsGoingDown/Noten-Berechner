@@ -3,41 +3,41 @@ import wx
 class Notenskalierer (wx.Frame):
 
     def __init__(self, parent, title):
-        super(Notenskalierer, self).__init__(parent, title = title, size = (300, 150))
+        super(Notenskalierer, self).__init__(parent, title = title, size = (300, 300))
         
         self.InitUI()
         
     
     def InitUI(self):
         #General Stuff
-        panel = wx.Panel(self)
-        panel.SetBackgroundColour('#696969')
+        self.panel = wx.Panel(self)
+        self.panel.SetBackgroundColour('#696969')
 
         vbox = wx.BoxSizer(wx.VERTICAL)
-        gridBox = wx.FlexGridSizer(4, 2, 10, 10)
+        gridBox = wx.FlexGridSizer(5, 2, 10, 10)
 
-        self.titleText = wx.StaticText(panel, label = "Notenskalen Berechnen")
+        self.titleText = wx.StaticText(self.panel, label = "Notenskalen Berechnen")
 
-        self.basicText = wx.TextCtrl(panel, -1, "", size=(175, -1))
-        someTxt = wx.StaticText(panel, -1, "Maxmalpunktzahl:")
+        self.basicText = wx.TextCtrl(self.panel, -1, "", size=(175, -1))
+        someTxt = wx.StaticText(self.panel, -1, "Maxmalpunktzahl:")
 
-        MuState = SettingsDialogue.readMuState(SettingsDialogue)
-        print (MuState)
-        if not MuState:
-            pass
+        self.percentageText = wx.StaticText(self.panel, -1, "Test prozent:")
+        self.percentage = wx.TextCtrl(self.panel, -1, "", size=(175, -1))
 
-        okButton = wx.Button(panel, -1, "OK")
+
+        okButton = wx.Button(self.panel, -1, "OK")
         okButton.Bind(wx.EVT_BUTTON, self.OnOk)
 
         
 
-        gridBox.AddMany([ (someTxt, 1, wx.EXPAND), (self.basicText, 1, wx.EXPAND),])
+        gridBox.AddMany([ (someTxt, 1, wx.EXPAND), (self.basicText, 1, wx.EXPAND)])
+        gridBox.AddMany([ (self.percentageText, 1, wx.EXPAND), (self.percentage, 1, wx.EXPAND)])
 
         vbox.Add(self.titleText, 0, wx.ALIGN_CENTER)
-        vbox.Add(gridBox, wx.ID_ANY, wx.EXPAND | wx.ALL, 10)
+        vbox.Add(gridBox, wx.ID_ANY, wx.EXPAND | wx.ALL, 20)
         vbox.Add(okButton, 0, wx.ALIGN_CENTER)
-        panel.SetSizer(vbox)
-
+        self.panel.SetSizer(vbox)
+        self.UpdateSettings()
 
         # Menubar
         menu = wx.MenuBar()
@@ -60,6 +60,13 @@ class Notenskalierer (wx.Frame):
     def OnSettings(self, e):
         SettingsDialogue(self,"Einstellungen")
 
+    def UpdateSettings(self):
+        self.settings = wx.Config("Notenskalierer")
+        if not self.settings.ReadBool('multipleScales'):
+            self.percentage.Disable()
+        else:
+            self.percentage.Enable()
+
     def OnOk(self, e):
         tmp = self.basicText.GetValue()
         try:
@@ -71,46 +78,38 @@ class Notenskalierer (wx.Frame):
 class SettingsDialogue(wx.Dialog):
         def __init__(self, parent, title):
             super(SettingsDialogue, self).__init__(parent, title = title, size = (350, 200))
+            self.parent = parent
             self.readSettings()
             self.InitUI()
 
-        def readMuState(self):
-            self.settings = wx.Config('Notenskalierer')
-            return self.settings.ReadBool('multipleScales')
-
-
         def readSettings(self):
             self.settings = wx.Config('Notenskalierer')
-            self.multipleSc = self.settings.ReadBool('multipleScales')
-            self.pProzentV = self.settings.ReadFloat('pProzent')
-            self.eProzentV = self.settings.ReadFloat('eProzent')
-            self.aProzentV = self.settings.ReadFloat('aProzent')
 
         def InitUI(self):
             self.SetTitle("Einstellungen")
             self.Centre()
-            panel = wx.Panel(self)
-            panel.SetBackgroundColour('#696969')
+            self.panel = wx.Panel(self)
+            self.panel.SetBackgroundColour('#696969')
 
             boxSizerSettings = wx.BoxSizer(wx.VERTICAL)
             zugGrid = wx.GridSizer(4, 2, 20, 20)
             buttonGrid = wx.GridSizer(1, 2, 20, 20)
 
-            self.multipleScale = wx.CheckBox(panel, -1, "Notenskalen für 3 verschiedene Leistungszüge")
-            self.multipleScale.SetValue(self.multipleSc)
+            self.multipleScale = wx.CheckBox(self.panel, -1, "Notenskalen für 3 verschiedene Leistungszüge")
+            self.multipleScale.SetValue(self.settings.ReadBool('multipleScales'))
             self.multipleScale.Bind(wx.EVT_CHECKBOX, self.OnMultipleScale)
 
-            self.filler = wx.StaticText(panel, -1, "")
+            self.filler = wx.StaticText(self.panel, -1, "")
 
-            self.pzug = wx.StaticText(panel, -1, "P-Zug Prozent")
-            self.azug = wx.StaticText(panel, -1, "A-Zug Prozent")
-            self.ezug = wx.StaticText(panel, -1, "E-Zug Prozent")
-            self.pProzent = wx.TextCtrl(panel, -1, f"{self.pProzentV}", size=(175, -1))
-            self.eProzent = wx.TextCtrl(panel, -1, f"{self.eProzentV}", size=(175, -1))
-            self.aProzent = wx.TextCtrl(panel, -1, f"{self.aProzentV}", size=(175, -1))
+            self.pzug = wx.StaticText(self.panel, -1, "P-Zug Prozent")
+            self.azug = wx.StaticText(self.panel, -1, "A-Zug Prozent")
+            self.ezug = wx.StaticText(self.panel, -1, "E-Zug Prozent")
+            self.pProzent = wx.TextCtrl(self.panel, -1, f"{self.settings.ReadFloat('pProzent')}", size=(175, -1))
+            self.eProzent = wx.TextCtrl(self.panel, -1, f"{self.settings.ReadFloat('eProzent')}", size=(175, -1))
+            self.aProzent = wx.TextCtrl(self.panel, -1, f"{self.settings.ReadFloat('aProzent')}", size=(175, -1))
 
-            self.okButton = wx.Button(panel, -1, "OK")
-            self.cancelButton = wx.Button(panel, -1, "Abbrechen")
+            self.okButton = wx.Button(self.panel, -1, "OK")
+            self.cancelButton = wx.Button(self.panel, -1, "Abbrechen")
 
             self.okButton.Bind(wx.EVT_BUTTON, self.OnOk)
             self.cancelButton.Bind(wx.EVT_BUTTON, self.OnCancel)
@@ -120,7 +119,7 @@ class SettingsDialogue(wx.Dialog):
             zugGrid.AddMany([(self.filler, 1, wx.EXPAND),(buttonGrid, 1, wx.EXPAND) ])
             boxSizerSettings.Add(self.multipleScale, 0, wx.ALIGN_CENTER)
             boxSizerSettings.Add(zugGrid, wx.ID_ANY, wx.EXPAND | wx.ALL, 10)
-            panel.SetSizer(boxSizerSettings)
+            self.panel.SetSizer(boxSizerSettings)
             self.Show(True)
 
         def OnMultipleScale(self, e):
@@ -139,10 +138,11 @@ class SettingsDialogue(wx.Dialog):
             self.settings.WriteFloat('eProzent', float(self.eProzent.GetValue()))
             self.settings.WriteFloat('aProzent', float(self.aProzent.GetValue()) )
             self.settings.Flush()
+            self.parent.UpdateSettings()
 
         def OnOk(self, e):
             self.Save()
-            self.Close()  
+            self.Close() 
 
         def OnCancel(self, e):
             self.Close()       
