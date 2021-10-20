@@ -1,4 +1,6 @@
 import wx
+import wx.grid
+from markCalc import MarkCalculator
 
 class Notenskalierer (wx.Frame):
 
@@ -12,7 +14,8 @@ class Notenskalierer (wx.Frame):
         #General Stuff
         self.panel = wx.Panel(self)
         self.panel.SetBackgroundColour('#696969')
-
+        
+        self.aBox = wx.BoxSizer(wx.VERTICAL)
         vbox = wx.BoxSizer(wx.VERTICAL)
         gridBox = wx.FlexGridSizer(5, 2, 10, 10)
 
@@ -30,12 +33,15 @@ class Notenskalierer (wx.Frame):
 
         
 
+        
+
         gridBox.AddMany([ (someTxt, 1, wx.EXPAND), (self.basicText, 1, wx.EXPAND)])
         gridBox.AddMany([ (self.percentageText, 1, wx.EXPAND), (self.percentage, 1, wx.EXPAND)])
 
         vbox.Add(self.titleText, 0, wx.ALIGN_CENTER)
         vbox.Add(gridBox, wx.ID_ANY, wx.EXPAND | wx.ALL, 20)
         vbox.Add(okButton, 0, wx.ALIGN_CENTER)
+
         self.panel.SetSizer(vbox)
         self.UpdateSettings()
 
@@ -62,19 +68,82 @@ class Notenskalierer (wx.Frame):
 
     def UpdateSettings(self):
         self.settings = wx.Config("Notenskalierer")
-        if not self.settings.ReadBool('multipleScales'):
+        self.percentage.SetValue("")
+        if  self.settings.ReadBool('multipleScales'):
             self.percentage.Disable()
         else:
             self.percentage.Enable()
 
     def OnOk(self, e):
+        self.marks = list()
+        self.settings=wx.Config("Notenskalierer")
         tmp = self.basicText.GetValue()
         try:
             tmp = float(tmp)
         except:
             self.numberError = wx.MessageDialog(self, "Bitte geben Sie eine Zahl ein!", "Fehler", wx.OK | wx.ICON_ERROR)
             self.numberError.ShowModal()
+            return
+        if not self.settings.ReadBool('multipleScales'):
+            tmp2 = self.percentage.GetValue()
+            try:
+                tmp2 = float(tmp2)
+            except:
+                self.numberError = wx.MessageDialog(self, "Bitte geben Sie eine Zahl ein!", "Fehler", wx.OK | wx.ICON_ERROR)
+                self.numberError.ShowModal()
+                return
+            if tmp2 > 100:
+                self.numberError = wx.MessageDialog(self, "Bitte geben Sie eine Zahl zwischen 0 und 100 ein!", "Fehler", wx.OK | wx.ICON_ERROR)
+                self.numberError.ShowModal()
+                return
+            print(MarkCalculator.calculateMarkScalePercent(tmp, tmp2))
+            self.marks.append(MarkCalculator.calculateMarkScalePercent(tmp, tmp2))
+            ResultDialogue(self, 'Ergebnisse', marks=self.marks)
+            
+        else:
+            percentages = [self.settings.ReadFloat(f'{zug}Percent') for zug in ['p', 'e', 'a']]
+            for percent in percentages:
+                self.marks.append(MarkCalculator.calculateMarkScalePercent(tmp, percent))
+                print(MarkCalculator.calculateMarkScalePercent(tmp, percent))
+        ResultDialogue(self, 'Ergebnisse', marks=self.marks)
+class ResultDialogue(wx.Dialog):
+     def __init__(self, parent, title, marks):
+            super(ResultDialogue, self).__init__(parent, title = title, size = (350, 200))
+            self.parent = parent
+            self.marks = marks
+            self.InitUI()
+     def InitUI(self):
 
+        self.settings = wx.Config("Notenskalierer")
+
+        self.panel = wx.Panel(self)
+        self.panel.SetBackgroundColour('ffffff')
+        sz = wx.BoxSizer(wx.VERTICAL)
+
+        self.markGrid = wx.grid.Grid(self)
+        self.markGrid.CreateGrid(11,1)
+        self.markGrid.SetRowSize(0, 20)
+        self.markGrid.SetColSize(0, 100)
+        self.markGrid.DeleteCols(0, 1)
+        for column, markL in enumerate(self.marks):
+            mar = 1.0
+            self.markGrid.AppendCols(1)
+            for row, mark in enumerate(markL):
+                self.markGrid.SetRowLabelValue( row, f'{mar}')
+                self.markGrid.SetCellValue( row, column, f'{int(mark)}')
+                mar+=.5
+
+        if not self.settings.ReadBool('multipleScales'):
+            self.markGrid.SetColLabelValue(0, "Notenskala")
+        else:
+            zuege = ['P-Zug', 'E-Zug', 'A-Zug']
+            for zug in zuege:
+                self.markGrid.SetColLabelValue(zuege.index(zug), f'{zug}')
+
+        
+        sz.Add(self.markGrid, 1, wx.EXPAND | wx.ALL, 10)
+        self.SetSizerAndFit(sz)
+        self.Show(True)
 class SettingsDialogue(wx.Dialog):
         def __init__(self, parent, title):
             super(SettingsDialogue, self).__init__(parent, title = title, size = (350, 200))
